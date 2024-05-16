@@ -1,0 +1,67 @@
+---
+import CornerBits  from '../components/CornerBits.astro';
+
+---
+
+<div class="DynamicContentControl">
+	<div class="testSquare">
+		<a id="targetElement" href="/">Target Link</a>
+	</div>
+</div>
+
+
+<style lang="scss">
+	
+</style>
+
+<script>
+	/*===== Log UTM values =====*/	
+		function parameterLogger(param) {
+			var searchParams = new URLSearchParams(window.location.search); 
+			var paramValue = "";
+			var paramState = "";
+
+			if(searchParams.has(param)) {
+				//if UTM parameters are present in URL
+				//console.log("===== UTM values detected - in URL =====");
+				paramState = "url";
+				paramValue = searchParams.get(param);
+				sessionStorage.setItem(param, paramValue);
+				localStorage.setItem(param, paramValue);
+
+			}else if(sessionStorage.getItem(param)){
+				//if UTM parameters are not present in URL, but are in SessionStorage
+				//console.log("===== UTM values detected - in short-term session =====");
+				paramState = "sessionStorage";
+				paramValue = sessionStorage.getItem(param);
+
+			}else if(localStorage.getItem(param)){
+				//if UTM parameters are not present in URL or SessionStorage, but are in LocalStorage
+				//console.log("===== UTM values detected - in long-term session =====");
+				paramState = "localStorage";
+				paramValue = localStorage.getItem(param);
+
+			}
+			console.log("UTM detected: "+param+": "+paramValue+", paramState: "+paramState);
+			//return paramValue;
+			return {paramValue, paramState};
+
+		};
+
+		
+
+	/*===== Run Functions =====*/
+		var browsingContext = parameterLogger("browsing-context");
+		console.log(browsingContext);
+
+		if(browsingContext.paramValue == 'default'){
+			//reset, change nothing
+		}else if(browsingContext.paramValue == 'healthcare'){
+			//healthcare context
+			console.log('healthcare context');
+			var target = document.querySelector('#targetElement');
+			target.setAttribute("href", "/healthcare-landing");
+		} else{
+			//no extra context
+		}
+</script>
