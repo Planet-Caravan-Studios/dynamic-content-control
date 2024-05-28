@@ -3,64 +3,159 @@
 ---
 
 <div class="DynamicContentControl">
+	
 	<div class="testSquare">
-		<a id="targetElement" href="/">Target Link</a>
+		<a id="targetElement" data-dynamic-content="homepage-link" href="/">Target Link</a>
 	</div>
+	
+	<br/>
+
+	<div class="testSquare">
+		Test Context Status: 
+		<br/>
+		<span data-dynamic-content="test-context-status">Test Context Not Active</span>
+	</div>
+	
+	<br/>
+
+	<div id="browsingContextDataTool">
+		Dynamic Content Control
+		<div>Browsing Context value: [<span class="browsingContextValue"></span>]</div>
+		<div>Browsing Context state: [<span class="browsingContextState"></span>]</div>
+	</div>
+
+		
 </div>
 
 
+
+
 <style lang="scss">
-	
+	.testSquare{
+		width: 300px;
+		height: 100px;
+		border: dashed 2px #000;
+	}
+
+	#browsingContextDataTool{
+		border: dashed 2px #000;
+		padding: 10px;
+		text-align: left;
+		background: #fff;
+	}
 </style>
 
 <script>
-	/*===== Log UTM values =====*/	
-		function parameterLogger(param) {
-			var searchParams = new URLSearchParams(window.location.search); 
-			var paramValue = "";
-			var paramState = "";
+	/*===== ===================== =====*/
+	/*===== Core Plugin Functions =====*/
+	/*===== ===================== =====*/
+	/* Core functionality - Do not edit */
 
-			if(searchParams.has(param)) {
-				//if UTM parameters are present in URL
-				//console.log("===== UTM values detected - in URL =====");
-				paramState = "url";
-				paramValue = searchParams.get(param);
-				sessionStorage.setItem(param, paramValue);
-				localStorage.setItem(param, paramValue);
+		/*===== Log URL Parameter values =====*/	
+			function parameterLogger(param) {
+				var searchParams = new URLSearchParams(window.location.search); 
+				var paramValue = "";
+				var paramState = "";
 
-			}else if(sessionStorage.getItem(param)){
-				//if UTM parameters are not present in URL, but are in SessionStorage
-				//console.log("===== UTM values detected - in short-term session =====");
-				paramState = "sessionStorage";
-				paramValue = sessionStorage.getItem(param);
+				if(searchParams.has(param)) {
+					//if UTM parameters are present in URL
+					//console.log("===== UTM values detected - in URL =====");
+					paramState = "url";
+					paramValue = searchParams.get(param);
+					sessionStorage.setItem(param, paramValue);
+					localStorage.setItem(param, paramValue);
 
-			}else if(localStorage.getItem(param)){
-				//if UTM parameters are not present in URL or SessionStorage, but are in LocalStorage
-				//console.log("===== UTM values detected - in long-term session =====");
-				paramState = "localStorage";
-				paramValue = localStorage.getItem(param);
+				}else if(sessionStorage.getItem(param)){
+					//if UTM parameters are not present in URL, but are in SessionStorage
+					//console.log("===== UTM values detected - in short-term session =====");
+					paramState = "shortTermSession";
+					paramValue = sessionStorage.getItem(param);
 
+				}else if(localStorage.getItem(param)){
+					//if UTM parameters are not present in URL or SessionStorage, but are in LocalStorage
+					//console.log("===== UTM values detected - in long-term session =====");
+					paramState = "longTermSession";
+					paramValue = localStorage.getItem(param);
+
+				}
+				//console.log("UTM detected: "+param+": "+paramValue+", paramState: "+paramState);
+				//return paramValue;
+				return {paramValue, paramState};
+			};
+
+	/*===== ====================== =====*/
+	/*===== Configurable Functions =====*/
+	/*===== ====================== =====*/
+
+		/*===== Template - copy and edit this =====*/
+			function templateAction(){
+				let elements = document.querySelectorAll('[data-dynamic-content="test"]');
+				elements.forEach(element => {
+					//element.setAttribute("href", "/new-link");
+					//element.innerHTML = "new content"
+					//element.addClass('newClass');
+				});
 			}
-			console.log("UTM detected: "+param+": "+paramValue+", paramState: "+paramState);
-			//return paramValue;
-			return {paramValue, paramState};
 
-		};
+		/*===== Data Tester Tool =====*/
+			function dataTesterAction(){
+				let toolElement = document.querySelector('#browsingContextDataTool');
+				if(toolElement){
+					let elements1 = document.querySelectorAll('#browsingContextDataTool .browsingContextValue');
+					elements1.forEach(element => {
+						element.innerHTML = browsingContext.paramValue
+					});
 
+					let elements2 = document.querySelectorAll('#browsingContextDataTool .browsingContextState');
+					elements2.forEach(element => {
+						element.innerHTML = browsingContext.paramState
+					});
+				}
+				
+			}
+
+		/*===== Test Action =====*/
+			function testAction(){
+				let elements = document.querySelectorAll('[data-dynamic-content="test-context-status"]');
+				elements.forEach(element => {
+					element.innerHTML = "Test Context Is Active"
+				});
+			}
+
+		/*===== Healthcare Context Action =====*/
+			function healthcareContextAction(){
+				//update link
+				let elements = document.querySelectorAll('[data-dynamic-content="homepage-link"]');
+				elements.forEach(element => {
+					element.setAttribute("href", "/healthcare-landing");
+				});
+			}
 		
-
-	/*===== Run Functions =====*/
+/*===== ====================== =====*/
+/*===== Runtime Functions =====*/
+/*===== ====================== =====*/
+	
+	/*===== Grab current browsing context =====*/
 		var browsingContext = parameterLogger("browsing-context");
-		console.log(browsingContext);
-
+		//display browsingContext info in console
+		if(browsingContext != ''){
+			console.group("Browsing Context present");
+			console.log("Browsing Context value: [",browsingContext.paramValue,"]");
+			console.log("Browsing Context state: [",browsingContext.paramState,"]");
+			console.groupEnd();
+			dataTesterAction();
+		}
+	
+	/*===== Run action functions based on context =====*/
 		if(browsingContext.paramValue == 'default'){
 			//reset, change nothing
-		}else if(browsingContext.paramValue == 'healthcare'){
+		}else if(browsingContext.paramValue == 'test'){
 			//healthcare context
-			console.log('healthcare context');
-			var target = document.querySelector('#targetElement');
-			target.setAttribute("href", "/healthcare-landing");
-		} else{
+			testAction();
+		} else if(browsingContext.paramValue == 'healthcare'){
+			//healthcare context
+			healthcareContextAction();
+		} else {
 			//no extra context
 		}
 </script>

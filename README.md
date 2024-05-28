@@ -1,8 +1,14 @@
 # Simple Showcase Template | Planet Caravan Studios
 
-Use this template to showcase components and ideas in a simple standalone manner.  It includes a sandbox area for the demo component and a text area for explaining how it works.
-
-This template can be found at: https://github.com/Planet-Caravan-Studios/simple-showcase-template
+Planned Updates:
+- [x] Scalability
+- [ ] Time-based expiration control (X days for browsing context to reset)
+- [ ] State-based expiration control (url vs session vs long-term)
+- [ ] Simple predefined actions
+- [ ] Simple predefined CSS
+- [ ] Simple browsing context notifications
+- [ ] Premade button/link for resetting browsing context
+- [ ] Proper standalone script
 
 ---
 
