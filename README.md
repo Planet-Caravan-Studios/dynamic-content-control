@@ -1,4 +1,4 @@
-# Simple Showcase Template | Planet Caravan Studios
+# Dynamic Content Control
 
 Planned Updates:
 - [x] Scalability
@@ -6,9 +6,9 @@ Planned Updates:
 - [ ] State-based expiration control (url vs session vs long-term)
 - [ ] Simple predefined actions
 - [ ] Simple predefined CSS
-- [ ] Simple browsing context notifications
+- [x] Simple browsing context notifications
 - [ ] Premade button/link for resetting browsing context
-- [ ] Proper standalone script
+- [ ] Proper standalone script for plugin distribution
 
 ---
 
